@@ -6,15 +6,19 @@ License:	GPL v2
 Group:		Applications
 Source0:	http://ftp.gnome.org/pub/GNOME/sources/cheese/3.6/%{name}-%{version}.tar.xz
 # Source0-md5:	5278f0223fb5e25957f20f14716ff760
+BuildRequires:	autoconf
+BuildRequires:	automake
 BuildRequires:	clutter-gst-devel
 BuildRequires:	gnome-doc-utils
 BuildRequires:	gnome-video-effects
 BuildRequires:	gobject-introspection-devel
+BuildRequires:	gstreamer-plugins-bad-devel
 BuildRequires:	gstreamer-plugins-base-devel
 BuildRequires:	gtk-doc
 BuildRequires:	itstool
 BuildRequires:	libcanberra-gtk3-devel
 BuildRequires:	librsvg-devel
+BuildRequires:	libtool
 BuildRequires:	pkg-config
 BuildRequires:	udev-glib-devel
 BuildRequires:	xorg-libXtst-devel
@@ -60,7 +64,18 @@ cheese API documentation.
 %prep
 %setup -q
 
+# kill gnome common deps
+sed -i -e 's/GNOME_COMPILE_WARNINGS.*//g'	\
+    -i -e 's/GNOME_MAINTAINER_MODE_DEFINES//g'	\
+    -i -e 's/GNOME_COMMON_INIT//g'		\
+    -i -e 's/GNOME_CXX_WARNINGS.*//g'		\
+    -i -e 's/GNOME_DEBUG_CHECK//g' configure.ac
+
 %build
+%{__libtoolize}
+%{__aclocal} -I m4
+%{__automake}
+%{__autoconf}
 %configure \
 	--disable-schemas-compile	\
 	--disable-silent-rules		\
