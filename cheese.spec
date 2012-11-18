@@ -1,11 +1,11 @@
 Summary:	Photobooth-inspired GNOME application
 Name:		cheese
-Version:	3.6.1
+Version:	3.6.2
 Release:	1
 License:	GPL v2
 Group:		Applications
 Source0:	http://ftp.gnome.org/pub/GNOME/sources/cheese/3.6/%{name}-%{version}.tar.xz
-# Source0-md5:	5278f0223fb5e25957f20f14716ff760
+# Source0-md5:	d152bd8bd29684a89213c633310634ac
 BuildRequires:	autoconf
 BuildRequires:	automake
 BuildRequires:	clutter-gst-devel
