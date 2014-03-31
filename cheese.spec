@@ -1,11 +1,11 @@
 Summary:	Photobooth-inspired GNOME application
 Name:		cheese
-Version:	3.10.2
-Release:	2
+Version:	3.12.0
+Release:	1
 License:	GPL v2
-Group:		Applications
-Source0:	http://ftp.gnome.org/pub/GNOME/sources/cheese/3.10/%{name}-%{version}.tar.xz
-# Source0-md5:	2a344ca60794879a6fcb83f9afa01f1b
+Group:		X11/Applications
+Source0:	http://ftp.gnome.org/pub/GNOME/sources/cheese/3.12/%{name}-%{version}.tar.xz
+# Source0-md5:	90e0e1e025bb4c9053c43b62a9afe62c
 BuildRequires:	autoconf
 BuildRequires:	automake
 BuildRequires:	clutter-gst-devel
@@ -22,8 +22,8 @@ BuildRequires:	pkg-config
 BuildRequires:	udev-glib-devel
 BuildRequires:	xorg-libXtst-devel
 BuildRequires:	yelp-tools
+Requires(post,postun):	/usr/bin/gtk-update-icon-cache
 Requires(post,postun):	glib-gio-gsettings
-Requires(post,postun):	gtk+-update-icon-cache
 Requires(post,postun):	hicolor-icon-theme
 Requires:	%{name}-libs = %{version}-%{release}
 Requires:	dbus
@@ -65,11 +65,12 @@ cheese API documentation.
 %setup -q
 
 # kill gnome common deps
-sed -i -e 's/GNOME_COMPILE_WARNINGS.*//g'	\
+%{__sed} -i -e 's/GNOME_COMPILE_WARNINGS.*//g'	\
     -i -e 's/GNOME_MAINTAINER_MODE_DEFINES//g'	\
     -i -e 's/GNOME_COMMON_INIT//g'		\
     -i -e 's/GNOME_CXX_WARNINGS.*//g'		\
     -i -e 's/GNOME_DEBUG_CHECK//g' configure.ac
+%{__sed} -i -e '/@APPDATA_XML_RULES@/d' Makefile.am
 
 %build
 %{__libtoolize}
@@ -89,8 +90,9 @@ rm -rf $RPM_BUILD_ROOT
 %{__make} install \
 	DESTDIR=$RPM_BUILD_ROOT
 
-rm -rf $RPM_BUILD_ROOT%{_iconsdir}/hicolor/256x256
-rm -rf $RPM_BUILD_ROOT%{_datadir}/locale/{ca@valencia,en@shaw}
+%{__rm} -r $RPM_BUILD_ROOT%{_iconsdir}/hicolor/256x256
+%{__rm} -r $RPM_BUILD_ROOT%{_datadir}/locale/{ca@valencia,en@shaw}
+%{__rm} $RPM_BUILD_ROOT%{_libdir}/*.la
 
 %find_lang %{name} --with-gnome
 
@@ -112,7 +114,6 @@ rm -rf $RPM_BUILD_ROOT
 %defattr(644,root,root,755)
 %doc AUTHORS ChangeLog README
 %attr(755,root,root) %{_bindir}/*
-%{_datadir}/%{name}
 %{_datadir}/glib-2.0/schemas/org.gnome.Cheese.gschema.xml
 %{_desktopdir}/cheese.desktop
 %{_iconsdir}/hicolor/*/*/*.*
