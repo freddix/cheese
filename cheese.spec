@@ -1,15 +1,15 @@
 Summary:	Photobooth-inspired GNOME application
 Name:		cheese
-Version:	3.12.1
+Version:	3.14.0
 Release:	1
 License:	GPL v2
 Group:		X11/Applications
-Source0:	http://ftp.gnome.org/pub/GNOME/sources/cheese/3.12/%{name}-%{version}.tar.xz
-# Source0-md5:	48730944a24c9adbd897b672ec66adee
+Source0:	http://ftp.gnome.org/pub/GNOME/sources/cheese/3.14/%{name}-%{version}.tar.xz
+# Source0-md5:	4e990e97be5901b1c20323af8c345ad7
+Patch0:		%{name}-link.patch
 BuildRequires:	autoconf
 BuildRequires:	automake
 BuildRequires:	clutter-gst-devel
-BuildRequires:	gnome-video-effects
 BuildRequires:	gobject-introspection-devel
 BuildRequires:	gstreamer-plugins-bad-devel
 BuildRequires:	gstreamer-plugins-base-devel
@@ -32,6 +32,8 @@ Requires:	gstreamer-plugins-bad
 Requires:	gstreamer-plugins-base
 Requires:	gstreamer-plugins-good
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
+
+%define		_libexecdir	%{_libdir}/cheese
 
 %description
 Cheese is a Photobooth-inspired GNOME application for taking pictures
@@ -63,14 +65,19 @@ cheese API documentation.
 
 %prep
 %setup -q
+# Unresolved symbols in libcheese-gtk.so.23.1.13
+# fmod
+%patch0 -p1
 
 # kill gnome common deps
-%{__sed} -i -e 's/GNOME_COMPILE_WARNINGS.*//g'	\
-    -i -e 's/GNOME_MAINTAINER_MODE_DEFINES//g'	\
-    -i -e 's/GNOME_COMMON_INIT//g'		\
-    -i -e 's/GNOME_CXX_WARNINGS.*//g'		\
-    -i -e 's/GNOME_DEBUG_CHECK//g' configure.ac
-%{__sed} -i -e '/@APPDATA_XML_RULES@/d' Makefile.am
+%{__sed} -i -e '/GNOME_COMPILE_WARNINGS.*/d'	\
+    -i -e '/GNOME_MAINTAINER_MODE_DEFINES/d'	\
+    -i -e '/GNOME_COMMON_INIT/d'		\
+    -i -e '/GNOME_CXX_WARNINGS.*/d'		\
+    -i -e '/APPSTREAM_XML/d'			\
+    -i -e '/GNOME_DEBUG_CHECK/d' configure.ac
+
+%{__sed} -i -e '/@APPSTREAM_XML_RULES@/d' Makefile.am
 
 %build
 %{__libtoolize}
@@ -114,9 +121,14 @@ rm -rf $RPM_BUILD_ROOT
 %doc AUTHORS ChangeLog README
 %attr(755,root,root) %{_bindir}/*
 %{_datadir}/glib-2.0/schemas/org.gnome.Cheese.gschema.xml
-%{_desktopdir}/cheese.desktop
+%{_desktopdir}/org.gnome.Cheese.desktop
 %{_iconsdir}/hicolor/*/*/*.*
 %{_mandir}/man1/cheese.1*
+
+%dir %{_libexecdir}
+%{_libexecdir}/gnome-camera-service
+%{_datadir}/dbus-1/services/org.gnome.Camera.service
+%{_datadir}/dbus-1/services/org.gnome.Cheese.service
 
 %files libs
 %defattr(644,root,root,755)
