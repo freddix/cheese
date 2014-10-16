@@ -1,0 +1,13 @@
+diff -aurN cheese-3.14.0.orig/Makefile.am cheese-3.14.0/Makefile.am
+--- cheese-3.14.0.orig/Makefile.am	2014-10-11 21:35:02.000000000 +0200
++++ cheese-3.14.0/Makefile.am	2014-10-11 21:35:36.000000000 +0200
+@@ -88,7 +88,8 @@
+ libcheese_gtk_la_LIBADD = \
+ 	libcheese.la \
+ 	$(CHEESE_LIBS) \
+-	$(CHEESE_GTK_LIBS)
++	$(CHEESE_GTK_LIBS) \
++	-lm
+ 
+ libcheese_gtk_la_LDFLAGS = \
+ 	-version-info $(LIBCHEESE_GTK_LT_VERSION) \
